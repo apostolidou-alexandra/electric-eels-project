@@ -60,6 +60,28 @@ async def process_prompt(request: URL):
 
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Error with OpenAI API: {str(e)}")
+
+@app.post("/api/comment")
+async def add_comments(file_content: str):
+    prompt = "Add comments to this file of codewhere you deem necessary. Do not overdo it. Generate only the code wihtout any text before or after and without backticks surrounding it\n ``` \n" + file_content + "\n ```"
+
+    try:
+        client = OpenAI()
+        completion = client.chat.completions.create(
+        model="gpt-4o",
+        messages=[
+            {"role": "system", "content": "You are a devoted, helpful and productive code commenter."},
+            {
+                "role": "user",
+                "content": prompt
+            }
+            ]
+        )
+
+        reply = completion.choices[0].message.content
+        return reply
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Error with OpenAI API: {str(e)}")
     
 
 from fastapi.middleware.cors import CORSMiddleware
