@@ -31,7 +31,15 @@ function App() {
                 />
                 <button type="submit">Submit</button>
             </form>
-            {response && <div><h2>Response:</h2><p>{response}</p></div>}
+            {response && (
+                <div>
+                    <img
+                        src={response}
+                        alt="Generated Result"
+                        style={{ maxWidth: '100%', marginTop: '20px' }}
+                    />
+                </div>
+            )}
             {error && <div><h2>Error:</h2><p>{error}</p></div>}
         </div>
     );

@@ -35,16 +35,16 @@ def is_valid_url(url: str) -> bool:
 # Endpoint for processing prompt
 @app.post("/api/prompt")
 async def process_prompt(request: URL):
-    prompt = "Create a UML diagram of this repo in PlantText UML form. Only generate the PlantUML as plain text (not encased in backticks) with no other text before or after."
+    prompt = "Create a greatly detailed UML diagram of this repo in PlantText UML form. Only generate the PlantUML as plain text (not encased in backticks) with no other text before or after."
     if not is_valid_url(request.url):
         raise HTTPException(status_code=400, detail="Invalid URL format.")
 
     try:
         client = OpenAI()
         completion = client.chat.completions.create(
-        model="gpt-4o-mini",
+        model="gpt-4o",
         messages=[
-            {"role": "system", "content": "You are a helpful assistant."},
+            {"role": "system", "content": "You are a devoted, helpful and productive assistant."},
             {
                 "role": "user",
                 "content": prompt + " " + request.url 
