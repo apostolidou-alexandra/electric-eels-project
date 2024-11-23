@@ -3,7 +3,6 @@ import axios from 'axios';
 
 function App() {
     const [url, setUrl] = useState('');
-    const [prompt, setPrompt] = useState('');
     const [response, setResponse] = useState('');
     const [error, setError] = useState('');
 
@@ -13,7 +12,7 @@ function App() {
         setError('');
 
         try {
-            const res = await axios.post('http://localhost:8000/api/prompt', { url, prompt });
+            const res = await axios.post('http://localhost:8000/api/prompt', { url });
             setResponse(JSON.stringify(res.data.response));
         } catch (err) {
             setError(err.response?.data?.detail || 'An error occurred.');
@@ -29,11 +28,6 @@ function App() {
                     placeholder="Enter URL"
                     value={url}
                     onChange={(e) => setUrl(e.target.value)}
-                />
-                <textarea
-                    placeholder="Enter your prompt"
-                    value={prompt}
-                    onChange={(e) => setPrompt(e.target.value)}
                 />
                 <button type="submit">Submit</button>
             </form>

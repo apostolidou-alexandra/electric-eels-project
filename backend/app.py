@@ -20,9 +20,8 @@ openai.api_key = OPENAI_API_KEY
 app = FastAPI()
 
 # Request model
-class PromptRequest(BaseModel):
+class URL(BaseModel):
     url: str
-    prompt: str
 
 # Validate URL function
 def is_valid_url(url: str) -> bool:
@@ -34,7 +33,8 @@ def is_valid_url(url: str) -> bool:
 
 # Endpoint for processing prompt
 @app.post("/api/prompt")
-async def process_prompt(request: PromptRequest):
+async def process_prompt(request: URL):
+    prompt = "Create a UML diagram of this repo in PlantUML form. Only generate the PlantUML as text with no other text before or after."
     if not is_valid_url(request.url):
         raise HTTPException(status_code=400, detail="Invalid URL format.")
 
@@ -46,7 +46,7 @@ async def process_prompt(request: PromptRequest):
             {"role": "system", "content": "You are a helpful assistant."},
             {
                 "role": "user",
-                "content": request.prompt + " " + request.url 
+                "content": prompt + " " + request.url 
             }
             ]
         )
