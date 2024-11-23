@@ -13,3 +13,5 @@ An unfamiliar codebase can be very daunting to face! The Onboarder helps new tea
 The Onboarder is a web app built with a frontend created with Javascript and React and a Python backend. GPT-4 is called to create diagrams and summaries, and edit local code files by adding helpful comments.
 
 The app is deployed locally.
+
+<img src="ElectricEels.png" alt="logo" width="400"/>
