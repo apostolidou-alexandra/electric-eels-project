@@ -13,7 +13,7 @@ function App() {
 
         try {
             const res = await axios.post('http://localhost:8000/api/prompt', { url });
-            setResponse(JSON.stringify(res.data.response));
+            setResponse(res.data.response);
         } catch (err) {
             setError(err.response?.data?.detail || 'An error occurred.');
         }

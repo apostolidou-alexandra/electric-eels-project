@@ -5,6 +5,7 @@ import openai
 import os
 from urllib.parse import urlparse
 from openai import OpenAI
+import uml_converter
 
 # Load environment variables
 load_dotenv()
@@ -34,7 +35,7 @@ def is_valid_url(url: str) -> bool:
 # Endpoint for processing prompt
 @app.post("/api/prompt")
 async def process_prompt(request: URL):
-    prompt = "Create a UML diagram of this repo in PlantUML form. Only generate the PlantUML as text with no other text before or after."
+    prompt = "Create a UML diagram of this repo in PlantText UML form. Only generate the PlantUML as plain text (not encased in backticks) with no other text before or after."
     if not is_valid_url(request.url):
         raise HTTPException(status_code=400, detail="Invalid URL format.")
 
@@ -51,9 +52,11 @@ async def process_prompt(request: URL):
             ]
         )
 
-        reply = completion.choices[0].message
+        reply = completion.choices[0].message.content
 
-        return {"response": reply}
+        uml_diagram = uml_converter.generate_uml_diagram(reply)
+
+        return {"response": uml_diagram}
 
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Error with OpenAI API: {str(e)}")
