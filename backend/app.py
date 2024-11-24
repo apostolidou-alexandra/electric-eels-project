@@ -6,6 +6,7 @@ import os
 from urllib.parse import urlparse
 from openai import OpenAI
 import uml_converter
+import os
 
 # Load environment variables
 load_dotenv()
@@ -52,6 +53,9 @@ async def process_prompt(request: URL):
             ]
         )
 
+        repo_path = "/home/sandra/repos/todo-list-python/" 
+        process_repository(repo_path)
+
         reply = completion.choices[0].message.content
 
         uml_diagram = uml_converter.generate_uml_diagram(reply)
@@ -61,9 +65,8 @@ async def process_prompt(request: URL):
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Error with OpenAI API: {str(e)}")
 
-@app.post("/api/comment")
-async def add_comments(file_content: str):
-    prompt = "Add comments to this file of codewhere you deem necessary. Do not overdo it. Generate only the code wihtout any text before or after and without backticks surrounding it\n ``` \n" + file_content + "\n ```"
+def add_comments(file_content: str):
+    prompt = "Add comments to this file of code where you deem necessary. Do not overdo it. Generate only the code wihtout any text before or after and without backticks surrounding it\n ``` \n" + file_content + "\n ```"
 
     try:
         client = OpenAI()
@@ -93,4 +96,52 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+
+def read_and_write_file(file_path):
+    try:
+        with open(file_path, 'r') as file:
+            content = file.read()
+
+        commented = add_comments(content)
+
+        with open(file_path, 'w') as file:
+            file.write(commented)
+
+        return None
+
+    except FileNotFoundError:
+        print(f"File not found: {file_path}")
+        return None
+    except IOError as e:
+        print(f"An IOError occurred: {e}")
+        return None
+
+
+
+def find_code_files(repo_path, extensions):
+    code_files = []
+    for root, _, files in os.walk(repo_path):
+        for file in files:
+            if any(file.endswith(ext) for ext in extensions):
+                code_files.append(os.path.join(root, file))
+    return code_files
+
+
+extensions = [".py", ".js", ".java", ".c", ".cpp", ".tsx"] 
+
+def process_repository(repo_path: str):
+    try:
+        code_files = find_code_files(repo_path, extensions)
+        print(code_files)
+        tasks = [read_and_write_file(file) for file in code_files]
+
+        return {'code_files': code_files}
+    
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Error with file commenting: {str(e)}")
+
+
+
+
 
